@@ -158,7 +158,7 @@ const TwitterBotCleaner: React.FC = () => {
               <Shield className="h-12 w-12 text-twitter-blue mx-auto mb-4" />
               <h2 className="text-2xl font-semibold mb-4">Get Started</h2>
               <p className="text-gray-600 mb-6">
-                Choose how you'd like to import your follower data for analysis
+                Import your follower data for bot analysis. Free Twitter API accounts have limited access, so CSV import is recommended.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
@@ -166,15 +166,21 @@ const TwitterBotCleaner: React.FC = () => {
                   className="bg-twitter-blue hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
                 >
                   <Twitter className="h-4 w-4 mr-2" />
-                  Connect to Twitter
+                  Try Twitter API (Limited)
                 </button>
                 <button
                   onClick={() => setShowCSVImport(true)}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  Import CSV
+                  Import CSV (Recommended)
                 </button>
+              </div>
+              <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> Free Twitter API accounts can't access follower data. 
+                  Use CSV import for full functionality or upgrade to a paid plan for direct API access.
+                </p>
               </div>
             </div>
           </div>

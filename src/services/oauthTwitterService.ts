@@ -206,6 +206,7 @@ export class OAuthTwitterService {
       }
     } catch (error) {
       console.error('Error fetching followers:', error);
+      console.log('Note: Free Twitter API accounts cannot access follower data. Use CSV import instead.');
     }
 
     // Fallback to mock data if API fails
