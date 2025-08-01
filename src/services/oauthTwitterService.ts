@@ -67,7 +67,7 @@ export class OAuthTwitterService {
       `response_type=code&` +
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `scope=users.read%20follows.read&` +
+      `scope=users.read&` +
       `state=${state}&` +
       `code_challenge_method=S256&` +
       `code_challenge=${codeChallenge}`;
@@ -303,7 +303,7 @@ export class OAuthTwitterService {
   private generateCodeVerifier(): string {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return btoa(String.fromCharCode(...array))
+    return btoa(String.fromCharCode.apply(null, Array.from(array)))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=/g, '');
@@ -314,7 +314,7 @@ export class OAuthTwitterService {
     const encoder = new TextEncoder();
     const data = encoder.encode(verifier);
     const digest = await crypto.subtle.digest('SHA-256', data);
-    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=/g, '');
