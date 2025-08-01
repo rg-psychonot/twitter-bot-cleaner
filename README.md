@@ -123,4 +123,4 @@ If you encounter any issues or have questions, please open an issue on GitHub or
 - [ ] Advanced filtering options
 - [ ] Export functionality for analysis reports
 - [ ] Mobile app version
-- [ ] Integration with other social media platforms 
+- [ ] Integration with other social media platforms # Updated for OAuth fix
