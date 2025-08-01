@@ -39,7 +39,7 @@ export class OAuthTwitterService {
     return OAuthTwitterService.instance;
   }
 
-  // Start OAuth 2.0 flow
+  // Start OAuth 2.0 flow with PKCE
   async authenticateUser(): Promise<boolean> {
     const clientId = process.env.REACT_APP_TWITTER_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_TWITTER_REDIRECT_URI;
@@ -51,17 +51,30 @@ export class OAuthTwitterService {
       return false;
     }
 
+    // Generate PKCE code verifier and challenge
+    const codeVerifier = this.generateCodeVerifier();
+    const codeChallenge = await this.generateCodeChallenge(codeVerifier);
+    
     // Generate state for security
     const state = Math.random().toString(36).substring(7);
-    sessionStorage.setItem('twitter_oauth_state', state);
     
-    // Build OAuth URL
+    // Store PKCE and state for callback
+    sessionStorage.setItem('twitter_oauth_state', state);
+    sessionStorage.setItem('twitter_code_verifier', codeVerifier);
+    
+    // Build OAuth URL with PKCE
     const authUrl = `https://twitter.com/i/oauth2/authorize?` +
       `response_type=code&` +
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `scope=tweet.read%20users.read%20follows.read&` +
-      `state=${state}`;
+      `scope=users.read%20follows.read&` +
+      `state=${state}&` +
+      `code_challenge_method=S256&` +
+      `code_challenge=${codeChallenge}`;
+
+    console.log('OAuth URL:', authUrl);
+    console.log('Redirect URI being sent:', redirectUri);
+    console.log('Client ID being sent:', clientId);
 
     // Redirect to Twitter OAuth
     window.location.href = authUrl;
@@ -79,24 +92,31 @@ export class OAuthTwitterService {
       const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${btoa(`${process.env.REACT_APP_TWITTER_CLIENT_ID}:${process.env.REACT_APP_TWITTER_CLIENT_SECRET}`)}`
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
+          client_id: process.env.REACT_APP_TWITTER_CLIENT_ID || '',
+          client_secret: process.env.REACT_APP_TWITTER_CLIENT_SECRET || '',
           code,
-          redirect_uri: process.env.REACT_APP_TWITTER_REDIRECT_URI || ''
+          redirect_uri: process.env.REACT_APP_TWITTER_REDIRECT_URI || '',
+          code_verifier: sessionStorage.getItem('twitter_code_verifier') || ''
         })
       });
 
       if (tokenResponse.ok) {
         const tokenData = await tokenResponse.json();
-                this.accessToken = tokenData.access_token;
+        console.log('Token response:', tokenData);
+        this.accessToken = tokenData.access_token;
         if (this.accessToken) {
           sessionStorage.setItem('twitter_access_token', this.accessToken);
         }
         sessionStorage.removeItem('twitter_oauth_state');
+        sessionStorage.removeItem('twitter_code_verifier');
         return true;
+      } else {
+        const errorData = await tokenResponse.text();
+        console.error('Token exchange failed:', tokenResponse.status, errorData);
       }
     } catch (error) {
       console.error('OAuth error:', error);
@@ -277,6 +297,27 @@ export class OAuthTwitterService {
     }
     
     return followers;
+  }
+
+  // Generate PKCE code verifier
+  private generateCodeVerifier(): string {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  // Generate PKCE code challenge
+  private async generateCodeChallenge(verifier: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
   }
 }
 
