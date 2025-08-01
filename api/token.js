@@ -13,11 +13,17 @@ export default async function handler(req, res) {
     const clientId = process.env.REACT_APP_TWITTER_CLIENT_ID;
     const clientSecret = process.env.REACT_APP_TWITTER_CLIENT_SECRET;
     
+    console.log('Debug - Client ID exists:', !!clientId);
+    console.log('Debug - Client Secret exists:', !!clientSecret);
+    
+    const authHeader = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`;
+    console.log('Debug - Auth header:', authHeader.substring(0, 20) + '...');
+    
     const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
+        'Authorization': authHeader
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
