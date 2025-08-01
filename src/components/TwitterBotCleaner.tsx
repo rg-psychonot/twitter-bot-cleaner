@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Twitter, Users, Shield, Trash2, AlertTriangle, CheckCircle, Loader, Upload } from 'lucide-react';
 import CSVImport from './CSVImport';
 import OAuthTwitterService from '../services/oauthTwitterService';
@@ -32,6 +32,14 @@ const TwitterBotCleaner: React.FC = () => {
   });
 
   const twitterService = OAuthTwitterService.getInstance();
+
+  // Check if user is already connected on component mount
+  useEffect(() => {
+    const accessToken = sessionStorage.getItem('twitter_access_token');
+    if (accessToken) {
+      setIsConnected(true);
+    }
+  }, []);
 
   const connectToTwitter = async () => {
     try {
