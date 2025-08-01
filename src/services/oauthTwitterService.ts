@@ -145,14 +145,18 @@ export class OAuthTwitterService {
       console.log('Debug - Access token length:', accessToken?.length);
       
       // Get current user ID first
-      const userResponse = await fetch('https://api.twitter.com/2/users/me', {
+      const userResponse = await fetch('/api/twitter', {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          endpoint: '/users/me',
+          accessToken
+        })
       });
 
       console.log('Debug - User response status:', userResponse.status);
-      console.log('Debug - User response headers:', Object.fromEntries(userResponse.headers.entries()));
 
       if (!userResponse.ok) {
         const errorText = await userResponse.text();
@@ -166,19 +170,18 @@ export class OAuthTwitterService {
       console.log('Debug - User ID:', userId);
 
       // Get followers
-      const followersResponse = await fetch(
-        `https://api.twitter.com/2/users/${userId}/followers?` +
-        `max_results=${Math.min(maxResults, 100)}&` +
-        `user.fields=created_at,description,public_metrics,verified,protected,profile_image_url`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        }
-      );
+      const followersResponse = await fetch('/api/twitter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          endpoint: `/users/${userId}/followers?max_results=${Math.min(maxResults, 100)}&user.fields=created_at,description,public_metrics,verified,protected,profile_image_url`,
+          accessToken
+        })
+      });
 
       console.log('Debug - Followers response status:', followersResponse.status);
-      console.log('Debug - Followers response headers:', Object.fromEntries(followersResponse.headers.entries()));
 
       if (followersResponse.ok) {
         const data = await followersResponse.json();
