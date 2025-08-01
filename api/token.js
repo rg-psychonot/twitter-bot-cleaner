@@ -10,15 +10,17 @@ export default async function handler(req, res) {
   }
 
   try {
+    const clientId = process.env.REACT_APP_TWITTER_CLIENT_ID;
+    const clientSecret = process.env.REACT_APP_TWITTER_CLIENT_SECRET;
+    
     const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: process.env.REACT_APP_TWITTER_CLIENT_ID,
-        client_secret: process.env.REACT_APP_TWITTER_CLIENT_SECRET,
         code,
         redirect_uri,
         code_verifier
