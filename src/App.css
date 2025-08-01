@@ -1,0 +1,57 @@
+/* Additional custom styles for the App component */
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom checkbox styling */
+input[type="checkbox"]:checked {
+  background-color: #1DA1F2;
+  border-color: #1DA1F2;
+}
+
+/* Smooth transitions */
+.transition-colors {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effects */
+.hover\:bg-gray-50:hover {
+  background-color: #f9fafb;
+}
+
+.hover\:bg-blue-600:hover {
+  background-color: #2563eb;
+}
+
+.hover\:bg-red-700:hover {
+  background-color: #dc2626;
+}
+
+.hover\:bg-red-200:hover {
+  background-color: #fecaca;
+}
+
+.hover\:bg-yellow-200:hover {
+  background-color: #fef3c7;
+}
+
+/* Focus states */
+button:focus {
+  outline: 2px solid #1DA1F2;
+  outline-offset: 2px;
+}
+
+input:focus {
+  outline: 2px solid #1DA1F2;
+  outline-offset: 2px;
+} 
