@@ -126,3 +126,4 @@ If you encounter any issues or have questions, please open an issue on GitHub or
 - [ ] Integration with other social media platforms # Updated for OAuth fix
 # Fixed redirect URI
 # Force redeploy with correct redirect URI
+# Force new deployment
