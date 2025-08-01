@@ -134,7 +134,9 @@ export class OAuthTwitterService {
 
   // Get user's followers
   async getFollowers(maxResults: number = 1000): Promise<TwitterUser[]> {
-    if (!this.accessToken) {
+    // Load access token from sessionStorage
+    const accessToken = sessionStorage.getItem('twitter_access_token');
+    if (!accessToken) {
       throw new Error('No access token available');
     }
 
@@ -142,7 +144,7 @@ export class OAuthTwitterService {
       // Get current user ID first
       const userResponse = await fetch('https://api.twitter.com/2/users/me', {
         headers: {
-          'Authorization': `Bearer ${this.accessToken}`
+          'Authorization': `Bearer ${accessToken}`
         }
       });
 
@@ -160,7 +162,7 @@ export class OAuthTwitterService {
         `user.fields=created_at,description,public_metrics,verified,protected,profile_image_url`,
         {
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`
+            'Authorization': `Bearer ${accessToken}`
           }
         }
       );
