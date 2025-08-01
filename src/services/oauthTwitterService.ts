@@ -44,6 +44,8 @@ export class OAuthTwitterService {
     const clientId = process.env.REACT_APP_TWITTER_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_TWITTER_REDIRECT_URI;
     
+    console.log('OAuth Debug:', { clientId, redirectUri });
+    
     if (!clientId || !redirectUri) {
       console.error('Missing OAuth credentials');
       return false;
