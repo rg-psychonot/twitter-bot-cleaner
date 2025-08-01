@@ -118,8 +118,8 @@ const TwitterBotCleaner: React.FC = () => {
   };
 
   const removeSelectedFollowers = () => {
-    // Simulate removing followers
-    alert(`Removing ${selectedFollowers.size} followers...`);
+    // Note: This app doesn't have follows.write permission, so we can only analyze
+    alert(`Note: This app can only analyze followers. To remove followers, you would need to upgrade your app permissions to "Read and write and Direct message" in the X Developer Portal.`);
     setSelectedFollowers(new Set());
   };
 
@@ -310,7 +310,7 @@ const TwitterBotCleaner: React.FC = () => {
                         className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors flex items-center"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Remove Selected
+                        Analyze Selected
                       </button>
                     </div>
                   </div>

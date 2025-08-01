@@ -60,7 +60,7 @@ export class OAuthTwitterService {
       `response_type=code&` +
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `scope=tweet.read%20users.read%20follows.read%20follows.write&` +
+      `scope=tweet.read%20users.read%20follows.read&` +
       `state=${state}`;
 
     // Redirect to Twitter OAuth
