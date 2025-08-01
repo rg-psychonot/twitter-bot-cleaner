@@ -141,6 +141,9 @@ export class OAuthTwitterService {
     }
 
     try {
+      console.log('Debug - Access token exists:', !!accessToken);
+      console.log('Debug - Access token length:', accessToken?.length);
+      
       // Get current user ID first
       const userResponse = await fetch('https://api.twitter.com/2/users/me', {
         headers: {
@@ -148,12 +151,19 @@ export class OAuthTwitterService {
         }
       });
 
+      console.log('Debug - User response status:', userResponse.status);
+      console.log('Debug - User response headers:', Object.fromEntries(userResponse.headers.entries()));
+
       if (!userResponse.ok) {
-        throw new Error('Failed to get current user');
+        const errorText = await userResponse.text();
+        console.error('Debug - User API error:', errorText);
+        throw new Error(`Failed to get current user: ${userResponse.status} ${errorText}`);
       }
 
       const userData = await userResponse.json();
+      console.log('Debug - User data:', userData);
       const userId = userData.data.id;
+      console.log('Debug - User ID:', userId);
 
       // Get followers
       const followersResponse = await fetch(
@@ -167,8 +177,12 @@ export class OAuthTwitterService {
         }
       );
 
+      console.log('Debug - Followers response status:', followersResponse.status);
+      console.log('Debug - Followers response headers:', Object.fromEntries(followersResponse.headers.entries()));
+
       if (followersResponse.ok) {
         const data = await followersResponse.json();
+        console.log('Debug - Followers data:', data);
         return (data.data || []).map((user: any) => ({
           id: user.id,
           username: user.username,
@@ -182,6 +196,10 @@ export class OAuthTwitterService {
           verified: user.verified || false,
           protected: user.protected || false
         }));
+      } else {
+        const errorText = await followersResponse.text();
+        console.error('Debug - Followers API error:', errorText);
+        throw new Error(`Failed to get followers: ${followersResponse.status} ${errorText}`);
       }
     } catch (error) {
       console.error('Error fetching followers:', error);
