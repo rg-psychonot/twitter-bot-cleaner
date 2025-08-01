@@ -89,21 +89,21 @@ export class OAuthTwitterService {
         throw new Error('State mismatch');
       }
 
-      const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
+      const tokenResponse = await fetch('/api/token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          grant_type: 'authorization_code',
-          client_id: process.env.REACT_APP_TWITTER_CLIENT_ID || '',
-          client_secret: process.env.REACT_APP_TWITTER_CLIENT_SECRET || '',
+        body: JSON.stringify({
           code,
           redirect_uri: process.env.REACT_APP_TWITTER_REDIRECT_URI || '',
           code_verifier: sessionStorage.getItem('twitter_code_verifier') || ''
         })
       });
 
+      console.log('Token response status:', tokenResponse.status);
+      console.log('Token response headers:', Object.fromEntries(tokenResponse.headers.entries()));
+      
       if (tokenResponse.ok) {
         const tokenData = await tokenResponse.json();
         console.log('Token response:', tokenData);
@@ -117,6 +117,14 @@ export class OAuthTwitterService {
       } else {
         const errorData = await tokenResponse.text();
         console.error('Token exchange failed:', tokenResponse.status, errorData);
+        console.error('Request body sent:', {
+          grant_type: 'authorization_code',
+          client_id: process.env.REACT_APP_TWITTER_CLIENT_ID || '',
+          client_secret: process.env.REACT_APP_TWITTER_CLIENT_SECRET || '',
+          code,
+          redirect_uri: process.env.REACT_APP_TWITTER_REDIRECT_URI || '',
+          code_verifier: sessionStorage.getItem('twitter_code_verifier') || ''
+        });
       }
     } catch (error) {
       console.error('OAuth error:', error);
